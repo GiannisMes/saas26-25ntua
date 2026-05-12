@@ -1,0 +1,34 @@
+
+
+services:
+  prov_stats_db:
+    image: mysql:8.0
+    container_name: prov_stats_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: provider_statistics_db
+      MYSQL_USER: prov_user
+      MYSQL_PASSWORD: prov_password
+    ports:
+      - "3308:3306"
+    volumes:
+      - prov_db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Αυτό τρέχει το SQL αυτόματα!
+
+  prov_stats_api:
+    build: .
+    container_name: prov_stats_api
+    ports:
+      - "8084:8000"
+    environment:
+      - DB_HOST=prov_stats_db
+      - DB_USER=prov_user
+      - DB_PASSWORD=prov_password
+      - DB_NAME=provider_statistics_db
+    volumes:
+      - .:/app     
+    depends_on:
+      - prov_stats_db
+
+volumes:
+  prov_db_data:

@@ -1,0 +1,12 @@
+
+
+services:
+  orchestrator_api:
+    build: .
+    container_name: orchestrator_api
+    ports:
+      - "8080:8000" # Η κεντρική πόρτα της εφαρμογής
+    volumes:
+      - .:/app
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

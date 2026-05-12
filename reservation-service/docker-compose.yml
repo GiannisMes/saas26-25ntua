@@ -1,0 +1,24 @@
+
+
+services:
+  # Το Microservice σου (Python/FastAPI)
+  res_app:
+    build: .
+    container_name: reservation_api
+    ports:
+      - "8082:8000"  # Στο διάγραμμά σας το Reservation Service ακούει στη θύρα 8082
+    volumes:
+      - .:/app       # Αυτό συνδέει τον φάκελό σου με το container για να βλέπει τις αλλαγές στον κώδικα live
+    depends_on:
+      - res_db
+
+  # Η Βάση Δεδομένων σου (MySQL)
+  res_db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: reservation_db
+      MYSQL_USER: saas_user
+      MYSQL_PASSWORD: saas_password
+    ports:
+      - "3306:3306"  # Η προεπιλεγμένη θύρα της MySQL

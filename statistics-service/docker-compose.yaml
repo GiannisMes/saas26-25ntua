@@ -1,0 +1,27 @@
+
+services:
+  stats_api:
+    build: .
+    container_name: stats_api
+    ports:
+      - "8083:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - stats_db
+
+  stats_db:
+    image: mysql:8.0
+    container_name: stats_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: statistics_db
+      MYSQL_USER: stats_user
+      MYSQL_PASSWORD: stats_password
+    ports:
+      - "3307:3306" # Εξωτερική πόρτα 3307
+    volumes:
+      - stats_db_data:/var/lib/mysql
+
+volumes:
+  stats_db_data:
