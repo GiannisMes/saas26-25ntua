@@ -1,0 +1,13 @@
+CREATE DATABASE IF NOT EXISTS registration_db;
+USE registration_db;
+
+CREATE TABLE IF NOT EXISTS Provider (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    providerName VARCHAR(100) NOT NULL UNIQUE,
+    apiBaseUrl VARCHAR(255) NOT NULL,
+    apiKey VARCHAR(255) NOT NULL,
+    listPointsEndpoint VARCHAR(255) NOT NULL,
+    supportsReservations BOOLEAN DEFAULT FALSE,
+    hasLiveStatus BOOLEAN DEFAULT FALSE,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
