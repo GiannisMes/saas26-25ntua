@@ -19,7 +19,7 @@ services:
     build: .
     container_name: prov_stats_api
     ports:
-      - "8084:8000"
+      - "8081:8000"
     environment:
       - DB_HOST=prov_stats_db
       - DB_USER=prov_user

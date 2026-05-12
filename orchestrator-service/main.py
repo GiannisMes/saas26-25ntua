@@ -8,7 +8,17 @@ app = FastAPI()
 # Οι διευθύνσεις των άλλων microservices
 RESERVATION_URL = "http://reservation_api:8000/api/reserve"
 STATISTICS_URL = "http://stats_api:8000/api/statistics/update"
-PROVIDER_STATS_URL = "http://prov_stats_api:8000/api/provider_statistics/update"
+PROVIDER_STATS_URL = "http://prov_stats_api:8000/api/provider_statistics/"
+REGISTRATION_URL = "http://reg_app:8000/api"
+
+class ProviderRegJSON(BaseModel):
+    providerName: str
+    apiBaseUrl: str
+    apiKey: str
+    listPointsEndpoint: str
+    supportsReservations: bool = False
+    hasLiveStatus: bool = False
+
 # Το ίδιο "καλούπι" που στέλνει ο χρήστης
 class ReservationReqJSON(BaseModel):
     pointId: str
@@ -43,7 +53,7 @@ def orchestrate_reservation(req: ReservationReqJSON):
                 "isSuccess": True,
                 "pointStatus": "reserved"
             }
-            requests.post(PROVIDER_STATS_URL, json=provider_payload)
+            requests.post(f"{PROVIDER_STATS_URL}/update", json=provider_payload)
         except Exception:
             pass
 
@@ -75,7 +85,7 @@ def orchestrate_cancellation(res_id: str, user_id: str):
 def get_orchestrated_provider_stats(provider_name: str):
     try:
         # Ο Orchestrator καλεί εσωτερικά το Provider Statistics Service (8084)
-        target_url = f"http://172.17.0.1:8084/api/statistics/provider_statistics/{provider_name}/summary"
+        target_url = f"{PROVIDER_STATS_URL}/{provider_name}/summary"
         
         response = requests.get(target_url)
         
@@ -86,3 +96,41 @@ def get_orchestrated_provider_stats(provider_name: str):
         return response.json()
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Το Provider Statistics Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
+
+
+# --- 4. REGISTRATION SERVICE (PROXY) ---
+
+@app.post("/api/orchestrator/providers/register")
+def orchestrate_register_provider(req: ProviderRegJSON):
+    try:
+        response = requests.post(f"{REGISTRATION_URL}/register", json=req.dict())
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Το Registration Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
+
+
+@app.get("/api/orchestrator/providers")
+def orchestrate_list_providers():
+    try:
+        response = requests.get(f"{REGISTRATION_URL}/providers")
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Το Registration Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
+
+
+@app.get("/api/orchestrator/providers/{provider_name}")
+def orchestrate_get_provider(provider_name: str):
+    try:
+        response = requests.get(f"{REGISTRATION_URL}/providers/{provider_name}")
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Το Registration Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
+
+
+@app.delete("/api/orchestrator/providers/{provider_name}")
+def orchestrate_delete_provider(provider_name: str):
+    try:
+        response = requests.delete(f"{REGISTRATION_URL}/providers/{provider_name}")
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Το Registration Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")

@@ -17,7 +17,7 @@ services:
     build: .
     container_name: reg_app
     ports:
-      - "8083:8000"
+      - "8082:8000"
     environment:
       - DB_HOST=reg_db
       - DB_USER=reg_user
