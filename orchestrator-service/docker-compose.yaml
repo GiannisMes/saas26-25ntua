@@ -10,3 +10,9 @@ services:
       - .:/app
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    networks:
+      - shared-api-network
+
+networks:
+  shared-api-network:
+    external: true

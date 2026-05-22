@@ -21,6 +21,7 @@ def send_stat_event(event_type, provider_name=None, point_id=None, user_id=None,
         requests.post(STATISTICS_URL, json=payload, timeout=3)
     except:
         pass
+
 class ProviderRegJSON(BaseModel):
     providerName: str
     apiBaseUrl: str
@@ -43,7 +44,7 @@ def orchestrate_reservation(req: ReservationReqJSON):
         res_response = requests.post(RESERVATION_URL, json=req.dict())
         res_data = res_response.json()
     except Exception as e:
-        raise HTTPException(status_code=503, detail="Το Reservation Service δεν είναι διαθέσιμο.")
+        raise HTTPException(status_code=503, detail=f"Το Reservation Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
 
     # ΒΗΜΑ 2: Αν η κράτηση ΠΕΤΥΧΕ, ειδοποιούμε το Statistics Service
     if res_response.status_code == 200 and res_data.get("success") == True:

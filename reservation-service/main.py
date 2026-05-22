@@ -26,8 +26,8 @@ class ReservationResJSON(BaseModel):
 def get_db_connection():
     return mysql.connector.connect(
         host="res_db", 
-        user="saas_user",
-        password="saas_password",
+        user="root",
+        password="root_password",
         database="reservation_db"
     )
 

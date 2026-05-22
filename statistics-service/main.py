@@ -78,6 +78,7 @@ def get_global_statistics():
     finally:
         cursor.close()
         db.close()
+        
 @app.get("/api/statistics/global/filter")
 def get_filtered_statistics(
     provider_name: Optional[str] = Query(None),

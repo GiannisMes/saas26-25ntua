@@ -1,5 +1,5 @@
 # 1. Παίρνουμε μια έτοιμη, ελαφριά έκδοση της Python
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 # 2. Φτιάχνουμε έναν φάκελο εργασίας μέσα στο container
 WORKDIR /app

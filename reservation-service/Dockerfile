@@ -1,5 +1,5 @@
 # Χρησιμοποιούμε την επίσημη εικόνα της Python
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 # Φτιάχνουμε έναν φάκελο app μέσα στο container
 WORKDIR /app
