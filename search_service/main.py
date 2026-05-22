@@ -1,7 +1,7 @@
 import requests
 from fastapi import FastAPI
 from typing import List
-from schemas import SearchReqJSON, PointResJSON
+from schemas import  PointResJSON
 
 app = FastAPI()
 
@@ -23,7 +23,7 @@ PROVIDERS = {
 }
 
 @app.post("/api/search", response_model=List[PointResJSON])
-def search_points(criteria: SearchReqJSON):
+def search_points():
     list_points = []
 
     for name, info in PROVIDERS.items():
