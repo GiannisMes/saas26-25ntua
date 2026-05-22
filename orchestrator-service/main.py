@@ -11,6 +11,16 @@ STATISTICS_URL = "http://stats_api:8000/api/statistics/update"
 PROVIDER_STATS_URL = "http://prov_stats_api:8000/api/provider_statistics/"
 REGISTRATION_URL = "http://reg_app:8000/api"
 
+def send_stat_event(event_type, provider_name=None, point_id=None, user_id=None, details=None):
+    try:
+        payload = {"event_type": event_type}
+        if provider_name: payload["provider_name"] = provider_name
+        if point_id: payload["point_id"] = point_id
+        if user_id: payload["user_id"] = user_id
+        if details: payload["details"] = details
+        requests.post(STATISTICS_URL, json=payload, timeout=3)
+    except:
+        pass
 class ProviderRegJSON(BaseModel):
     providerName: str
     apiBaseUrl: str
@@ -39,7 +49,7 @@ def orchestrate_reservation(req: ReservationReqJSON):
     if res_response.status_code == 200 and res_data.get("success") == True:
         try:
             # Στέλνουμε το "γεγονός" στα στατιστικά
-            requests.post(STATISTICS_URL, json={"event_type": "RESERVATION_MADE"})
+            send_stat_event("RESERVATION_MADE", provider_name=req.provider, point_id=req.pointId, user_id=req.userId)
         except Exception:
             # Αν τα στατιστικά έχουν "πέσει", δεν ακυρώνουμε την κράτηση του πελάτη.
             # Απλά το αγνοούμε (ή το γράφουμε σε ένα log).
@@ -74,7 +84,7 @@ def orchestrate_cancellation(res_id: str, user_id: str):
     # ΒΗΜΑ 2: Αν η ακύρωση ΠΕΤΥΧΕ, ειδοποιούμε το Statistics Service
     if res_response.status_code == 200 and res_data.get("success") == True:
         try:
-            requests.post(STATISTICS_URL, json={"event_type": "RESERVATION_CANCELLED"})
+           send_stat_event("RESERVATION_CANCELLED", user_id=user_id, details={"reservation_id": res_id})
         except Exception:
             pass
 
@@ -104,6 +114,8 @@ def get_orchestrated_provider_stats(provider_name: str):
 def orchestrate_register_provider(req: ProviderRegJSON):
     try:
         response = requests.post(f"{REGISTRATION_URL}/register", json=req.dict())
+        if response.status_code in (200, 201):
+            send_stat_event("PROVIDER_REGISTERED", provider_name=req.providerName)
         return response.json()
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Το Registration Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
@@ -131,6 +143,8 @@ def orchestrate_get_provider(provider_name: str):
 def orchestrate_delete_provider(provider_name: str):
     try:
         response = requests.delete(f"{REGISTRATION_URL}/providers/{provider_name}")
+        if response.status_code == 200:
+            send_stat_event("PROVIDER_DELETED", provider_name=provider_name)
         return response.json()
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Το Registration Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
@@ -140,6 +154,7 @@ def orchestrate_search():
     try:
 
         response = requests.post(SEARCH_URL)
+        send_stat_event("SEARCH_PERFORMED", details={"results_count": len(search_results) if isinstance(search_results, list) else 0})
         
         if response.status_code != 200:
             raise HTTPException(status_code=response.status_code, detail="Σφάλμα στο Search Service")
@@ -148,3 +163,4 @@ def orchestrate_search():
         
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=503, detail=f"Το Search Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
+    
