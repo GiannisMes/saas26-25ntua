@@ -1,0 +1,10 @@
+services:
+  search_api:
+    build: .
+    container_name: search_api
+    ports:
+      - "8087:8000" # Η ξεχωριστή πόρτα του δικού σου service
+    volumes:
+      - .:/app
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
