@@ -3,7 +3,7 @@ services:
     build: .
     container_name: search_api
     ports:
-      - "8081:8000" # Η ξεχωριστή πόρτα του δικού σου service
+      - "8087:8000" # Η ξεχωριστή πόρτα του δικού σου service
     volumes:
       - .:/app
     extra_hosts:
