@@ -8,7 +8,7 @@ app = FastAPI()
 # Οι διευθύνσεις των άλλων microservices
 RESERVATION_URL = "http://reservation_api:8000/api/reserve"
 STATISTICS_URL = "http://stats_api:8000/api/statistics/update"
-PROVIDER_STATS_URL = "http://prov_stats_api:8000/api/provider_statistics/"
+PROVIDER_STATS_URL = "http://prov_stats_api:8000/api/provider_statistics"
 REGISTRATION_URL = "http://reg_app:8000/api"
 
 def send_stat_event(event_type, provider_name=None, point_id=None, user_id=None, details=None):
@@ -80,7 +80,7 @@ def orchestrate_cancellation(res_id: str, user_id: str):
         res_response = requests.put(cancel_url, params={"user_id": user_id})
         res_data = res_response.json()
     except Exception as e:
-        raise HTTPException(status_code=503, detail="Το Reservation Service δεν είναι διαθέσιμο.")
+        raise HTTPException(status_code=503, detail=f"Το Reservation Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
 
     # ΒΗΜΑ 2: Αν η ακύρωση ΠΕΤΥΧΕ, ειδοποιούμε το Statistics Service
     if res_response.status_code == 200 and res_data.get("success") == True:

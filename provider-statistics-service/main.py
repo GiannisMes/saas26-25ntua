@@ -50,7 +50,7 @@ def record_event(event: EventCreate):
         cursor.close()
         conn.close()
 
-@app.get("/api/statistics/provider_statistics/{provider_name}/summary")
+@app.get("/api/provider_statistics/{provider_name}/summary")
 def get_provider_summary(provider_name: str):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)

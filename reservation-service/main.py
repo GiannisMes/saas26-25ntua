@@ -87,7 +87,7 @@ def cancel_reservation(res_id: str, user_id: str):
     try:
         cursor.execute("SELECT * FROM Reservation WHERE id = %s", (res_id,))
         res = cursor.fetchone()
-        if not res or res['userId'] != user_id:
+        if not res or res['userID'] != user_id:
             raise HTTPException(status_code=404, detail="Reservation not found or unauthorized")
         
         cursor.execute("UPDATE Reservation SET status = 'CANCELLED' WHERE id = %s", (res_id,))
