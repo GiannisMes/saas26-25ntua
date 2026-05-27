@@ -10,6 +10,7 @@ RESERVATION_URL = "http://reservation_api:8000/api/reserve"
 STATISTICS_URL = "http://stats_api:8000/api/statistics/update"
 PROVIDER_STATS_URL = "http://prov_stats_api:8000/api/provider_statistics"
 REGISTRATION_URL = "http://reg_app:8000/api"
+SEARCH_URL = "http://search_api:8000/api/search"
 
 def send_stat_event(event_type, provider_name=None, point_id=None, user_id=None, details=None):
     try:
