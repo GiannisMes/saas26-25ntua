@@ -231,7 +231,7 @@ def health_check():
     services = {
         "reservation": RESERVATION_URL.replace("/api/reserve", ""),
         "statistics": STATISTICS_URL.replace("/api/statistics/update", ""),
-        "provider_stats": PROVIDER_STATS_URL,
+        "provider_stats": PROVIDER_STATS_URL.replace("/api/provider_statistics", ""),
     }
     status = {}
     for name, url in services.items():

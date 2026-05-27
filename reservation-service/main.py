@@ -84,6 +84,7 @@ def create_reservation(req: ReservationReqJSON):
             
             # SAGA: Αν η αποθήκευση στη βάση αποτύχει, κάνουμε cancel στον provider
             try:
+               
                 cursor.execute(
                     "INSERT INTO Reservation (id, pointId, userId, startTime, endTime, status) VALUES (%s, %s, %s, %s, %s, %s)",
                     (new_id, req.pointId, req.userId, datetime.now(), end_time, "ACTIVE")
