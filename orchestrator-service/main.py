@@ -2,6 +2,12 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 import requests
+import asyncio
+import time
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("orchestrator")
 
 app = FastAPI()
 
@@ -13,15 +19,68 @@ REGISTRATION_URL = "http://reg_app:8000/api"
 SEARCH_URL = "http://search_api:8000/api/search"
 
 def send_stat_event(event_type, provider_name=None, point_id=None, user_id=None, details=None):
+    payload = {"event_type": event_type}
+    if provider_name: payload["provider_name"] = provider_name
+    if point_id: payload["point_id"] = point_id
+    if user_id: payload["user_id"] = user_id
+    if details: payload["details"] = details
     try:
-        payload = {"event_type": event_type}
-        if provider_name: payload["provider_name"] = provider_name
-        if point_id: payload["point_id"] = point_id
-        if user_id: payload["user_id"] = user_id
-        if details: payload["details"] = details
-        requests.post(STATISTICS_URL, json=payload, timeout=3)
-    except:
-        pass
+        response = requests.post(STATISTICS_URL, json=payload, timeout=3)
+        if response.status_code != 200:
+            raise Exception("Non-200 response")
+    except Exception:
+        queue_event(STATISTICS_URL, payload)
+
+
+# --- RETRY QUEUE για non-critical events ---
+pending_events = []  # In-memory queue
+MAX_RETRIES = 5
+
+def queue_event(url: str, payload: dict):
+    """Προσθέτει αποτυχημένο event στην ουρά retry"""
+    pending_events.append({
+        "url": url,
+        "payload": payload,
+        "retries": 0,
+        "next_retry": time.time() + 1  # Πρώτο retry σε 1 δευτερόλεπτο
+    })
+    logger.info(f"Event queued for retry: {url} | Queue size: {len(pending_events)}")
+
+async def retry_worker():
+    """Background task που ξαναστέλνει αποτυχημένα events με exponential backoff"""
+    while True:
+        await asyncio.sleep(5)  # Τρέχει κάθε 5 δευτερόλεπτα
+        now = time.time()
+        still_pending = []
+        
+        for event in pending_events:
+            if now < event["next_retry"]:
+                still_pending.append(event)
+                continue
+            
+            try:
+                response = requests.post(event["url"], json=event["payload"], timeout=3)
+                if response.status_code == 200:
+                    logger.info(f"Retry SUCCESS: {event['url']}")
+                    continue  # Πέτυχε, δεν το ξανα-βάζουμε
+            except Exception:
+                pass
+            
+            event["retries"] += 1
+            if event["retries"] >= MAX_RETRIES:
+                logger.warning(f"DEAD LETTER - Event dropped μετά από {MAX_RETRIES} αποτυχίες: {event['url']} | payload: {event['payload']}")
+                continue  # Πετάμε το event
+            
+            # Exponential backoff: 1s, 2s, 4s, 8s, 16s
+            event["next_retry"] = now + (2 ** event["retries"])
+            still_pending.append(event)
+        
+        pending_events.clear()
+        pending_events.extend(still_pending)
+
+@app.on_event("startup")
+async def start_retry_worker():
+    asyncio.create_task(retry_worker())
 
 class ProviderRegJSON(BaseModel):
     providerName: str
@@ -59,16 +118,17 @@ def orchestrate_reservation(req: ReservationReqJSON):
         # ΕΝΗΜΕΡΩΣΗ 2: Provider Statistics
         try:
             provider_payload = {
-                "providerName": req.provider, 
-                "pointId": req.pointId,       
+                "providerName": req.provider,
+                "pointId": req.pointId,
                 "eventType": "Reservation",
                 "isSuccess": True,
                 "pointStatus": "reserved"
             }
-            requests.post(f"{PROVIDER_STATS_URL}/update", json=provider_payload)
+            response = requests.post(f"{PROVIDER_STATS_URL}/update", json=provider_payload, timeout=3)
+            if response.status_code != 200:
+                raise Exception("Non-200 response")
         except Exception:
-            pass
-
+            queue_event(f"{PROVIDER_STATS_URL}/update", provider_payload)
     # ΒΗΜΑ 3: Επιστρέφουμε την απάντηση στον πελάτη
     return res_data
 
@@ -165,4 +225,21 @@ def orchestrate_search():
         
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=503, detail=f"Το Search Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
+@app.get("/health")
+def health_check():
+    services = {
+        "reservation": RESERVATION_URL.replace("/api/reserve", ""),
+        "statistics": STATISTICS_URL.replace("/api/statistics/update", ""),
+        "provider_stats": PROVIDER_STATS_URL,
+    }
+    status = {}
+    for name, url in services.items():
+        try:
+            r = requests.get(f"{url}/docs", timeout=2)
+            status[name] = "UP" if r.status_code == 200 else "DOWN"
+        except:
+            status[name] = "DOWN"
+    
+    status["pending_retry_events"] = len(pending_events)
+    return status
     

@@ -30,6 +30,20 @@ def get_db_connection():
         password="root_password",
         database="reservation_db"
     )
+def cancel_provider_reservation(provider: str, point_id: str, headers: dict):
+    """Saga compensating action: ακυρώνει την κράτηση στον provider αν αποτύχει η βάση"""
+    try:
+        if provider == "greenPlug":
+            url = f"https://davinci.softlab.ntua.gr/saas26/greenPlug/api/chargingPoints/{point_id}/reservations"
+            requests.delete(url, headers=headers, timeout=5)
+        elif provider == "bluePlug":
+            url = f"https://davinci.softlab.ntua.gr/saas26/bluePlug/api/location/{point_id}/hold"
+            requests.delete(url, headers=headers, timeout=5)
+        elif provider == "redPlug":
+            url = f"https://davinci.softlab.ntua.gr/saas26/redPlug/api/reserve/{point_id}"
+            requests.delete(url, headers=headers, timeout=5)
+    except Exception:
+        pass  # Best effort 
 
 # --- 1. ENDPOINT ΓΙΑ ΚΡΑΤΗΣΗ ---
 @app.post("/api/reserve", response_model=ReservationResJSON)
@@ -68,12 +82,23 @@ def create_reservation(req: ReservationReqJSON):
             end_time = data.get("reservationEnd") or data.get("reservedUntil") or data.get("reservationendtime")
             new_id = str(uuid.uuid4())
             
-            cursor.execute("INSERT INTO Reservation (id, pointId, userId, startTime, endTime, status) VALUES (%s, %s, %s, %s, %s, %s)",
-                           (new_id, req.pointId, req.userId, datetime.now(), end_time, "ACTIVE"))
-            db.commit()
-            return ReservationResJSON(reservationId=new_id, success=True, endTime=end_time)
-        
+            # SAGA: Αν η αποθήκευση στη βάση αποτύχει, κάνουμε cancel στον provider
+            try:
+                cursor.execute(
+                    "INSERT INTO Reservation (id, pointId, userId, startTime, endTime, status) VALUES (%s, %s, %s, %s, %s, %s)",
+                    (new_id, req.pointId, req.userId, datetime.now(), end_time, "ACTIVE")
+                )
+                db.commit()
+                return ReservationResJSON(reservationId=new_id, success=True, endTime=end_time)
+            except Exception as db_error:
+                db.rollback()
+                cancel_provider_reservation(req.provider, req.pointId, headers)
+                return ReservationResJSON(
+                    reservationId="", success=False, endTime="",
+                    errorMessage=f"Η κράτηση ακυρώθηκε λόγω εσωτερικού σφάλματος: {str(db_error)}"
+                )
         return ReservationResJSON(reservationId="", success=False, endTime="", errorMessage=res.text)
+       
 
     finally:
         cursor.close()

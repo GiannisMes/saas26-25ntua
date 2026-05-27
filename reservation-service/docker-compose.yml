@@ -2,6 +2,7 @@ services:
   # Η Βάση Δεδομένων σου (MySQL)
   res_db:
     image: mysql:8.0
+    container_name: res_db
     environment:
       MYSQL_ROOT_PASSWORD: root_password
       MYSQL_DATABASE: reservation_db
