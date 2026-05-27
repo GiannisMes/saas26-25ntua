@@ -1,7 +1,7 @@
 import requests
 from fastapi import FastAPI
 from typing import List
-from schemas import  PointResJSON
+from schema import  PointResJSON
 
 app = FastAPI()
 
