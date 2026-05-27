@@ -1,11 +1,18 @@
 import requests
 from fastapi import FastAPI
-from typing import List
-from schema import  PointResJSON
+from typing import Optional, List
+from pydantic import BaseModel
 
 app = FastAPI()
 
 API_KEY = "sk_saas_1bc1bc089068b423332e8c1e"
+
+class PointResJSON(BaseModel):
+    pointId: str
+    providerName: str
+    status: str
+    lat: str
+    lon: str
 
 PROVIDERS = {
     "redPlug": {
