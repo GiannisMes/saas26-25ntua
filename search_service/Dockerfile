@@ -13,8 +13,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 5. Αντιγράφουμε τον υπόλοιπο κώδικά μας (main.py, schemas.py)
 COPY . .
 
-# 6. Δηλώνουμε ότι το service μας θα "ακούει" στην πόρτα 8000
-EXPOSE 8000
-
 # 7. Η εντολή που θα τρέχει αυτόματα όταν σηκώνεται το container
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

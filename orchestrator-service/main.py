@@ -216,6 +216,7 @@ def orchestrate_search():
     try:
 
         response = requests.post(SEARCH_URL)
+        search_results = response.json()
         send_stat_event("SEARCH_PERFORMED", details={"results_count": len(search_results) if isinstance(search_results, list) else 0})
         
         if response.status_code != 200:
