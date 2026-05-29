@@ -17,6 +17,7 @@ STATISTICS_URL = "http://stats_api:8000/api/statistics/update"
 PROVIDER_STATS_URL = "http://prov_stats_api:8000/api/provider_statistics"
 REGISTRATION_URL = "http://reg_app:8000/api"
 SEARCH_URL = "http://search_api:8000/api/search"
+INVOICE_URL = "http://invoice_api:8000/api/invoices"
 
 def send_stat_event(event_type, provider_name=None, point_id=None, user_id=None, details=None):
     payload = {"event_type": event_type}
@@ -96,6 +97,15 @@ class ReservationReqJSON(BaseModel):
     userId: str
     provider: str
     duration: int = 60
+
+class InvoiceCreateReq(BaseModel):
+    providerName: str
+    month: int
+    year: int
+    totalPoints: int
+
+class InvoiceStatusUpdate(BaseModel):
+    status: str
 
 @app.post("/api/orchestrator/reserve")
 def orchestrate_reservation(req: ReservationReqJSON):
@@ -244,3 +254,34 @@ def health_check():
     status["pending_retry_events"] = len(pending_events)
     return status
     
+# --- 5. INVOICE SERVICE (PROXY) ---
+
+@app.post("/api/orchestrator/invoices/generate")
+def orchestrate_generate_invoice(req: InvoiceCreateReq):
+    try:
+        response = requests.post(f"{INVOICE_URL}/generate", json=req.dict())
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail=response.json())
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=503, detail=f"Το Invoice Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
+
+@app.get("/api/orchestrator/invoices/provider/{provider_name}")
+def orchestrate_get_provider_invoices(provider_name: str):
+    try:
+        response = requests.get(f"{INVOICE_URL}/provider/{provider_name}")
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail=response.json())
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=503, detail=f"Το Invoice Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
+
+@app.put("/api/orchestrator/invoices/{invoice_id}/status")
+def orchestrate_update_invoice_status(invoice_id: int, update: InvoiceStatusUpdate):
+    try:
+        response = requests.put(f"{INVOICE_URL}/{invoice_id}/status", json=update.dict())
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail=response.json())
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=503, detail=f"Το Invoice Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
