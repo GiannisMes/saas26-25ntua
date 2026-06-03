@@ -167,8 +167,8 @@ def track_click(req: dict):
 def orchestrate_global_stats():
     try:
         with ThreadPoolExecutor(max_workers=2) as ex:
-            f1 = ex.submit(requests.get, f"{STATISTICS_URL}global/filter")
-            f2 = ex.submit(requests.get, f"{STATISTICS_URL}global")
+            f1 = ex.submit(requests.get, f"{STATISTICS_URL}/global/filter")
+            f2 = ex.submit(requests.get, f"{STATISTICS_URL}/global")
             res, res2 = f1.result(), f2.result()
         data = res.json()
         data["total_reservations"] = res2.json().get("data", {}).get("total_reservations", 0)
