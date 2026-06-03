@@ -14,19 +14,19 @@ logger = logging.getLogger("orchestrator")
 app = FastAPI()
 
 RESERVATION_URL = "http://reservation_api:8000/api/reserve"
-STATISTICS_URL = "http://stats_api:8000/api/statistics/update"
+STATISTICS_URL = "http://stats_api:8000/api/statistics"
 PROVIDER_STATS_URL = "http://prov_stats_api:8000/api/provider_statistics"
-REGISTRATION_URL = "http://reg_app:8000/api"
+REGISTRATION_URL = "http://reg_app:8000/api/registration"
 SEARCH_URL = "http://search_api:8000/api/search"
 INVOICE_URL = "http://invoice_api:8000/api/invoices"
 
 def _do_send_stat(payload):
     try:
-        response = requests.post(STATISTICS_URL, json=payload, timeout=3)
+        response = requests.post(f"{STATISTICS_URL}/update", json=payload, timeout=3)
         if response.status_code != 200:
             raise Exception("Non-200 response")
     except Exception:
-        queue_event(STATISTICS_URL, payload)
+        queue_event(f"{STATISTICS_URL}/update", payload)
 
 def send_stat_event(event_type, provider_name=None, point_id=None, user_id=None, details=None):
     payload = {"event_type": event_type}
@@ -166,10 +166,9 @@ def track_click(req: dict):
 @app.get("/api/orchestrator/statistics/global")
 def orchestrate_global_stats():
     try:
-        base = STATISTICS_URL.replace("/api/statistics/update", "")
         with ThreadPoolExecutor(max_workers=2) as ex:
-            f1 = ex.submit(requests.get, f"{base}/api/statistics/global/filter")
-            f2 = ex.submit(requests.get, f"{base}/api/statistics/global")
+            f1 = ex.submit(requests.get, f"{STATISTICS_URL}global/filter")
+            f2 = ex.submit(requests.get, f"{STATISTICS_URL}global")
             res, res2 = f1.result(), f2.result()
         data = res.json()
         data["total_reservations"] = res2.json().get("data", {}).get("total_reservations", 0)
@@ -212,9 +211,8 @@ def orchestrate_admin_cancel(res_id: str):
 @app.get("/api/orchestrator/statistics/provider/{provider_name}/detailed")
 def get_provider_detailed_stats(provider_name: str):
     try:
-        base = STATISTICS_URL.replace("/api/statistics/update", "")
         with ThreadPoolExecutor(max_workers=2) as ex:
-            f1 = ex.submit(requests.get, f"{base}/api/statistics/global/filter", params={"provider_name": provider_name})
+            f1 = ex.submit(requests.get, f"{STATISTICS_URL}/global/filter", params={"provider_name": provider_name})
             f2 = ex.submit(requests.get, f"{PROVIDER_STATS_URL}/{provider_name}/summary")
         data = f1.result().json()
         summary = f2.result().json()
@@ -246,7 +244,7 @@ def get_orchestrated_provider_stats(provider_name: str):
 @app.post("/api/orchestrator/providers/register")
 def orchestrate_register_provider(req: ProviderRegJSON):
     try:
-        response = requests.post(f"{REGISTRATION_URL}/register", json=req.dict())
+        response = requests.post(REGISTRATION_URL, json=req.dict())
         if response.status_code in (200, 201):
             send_stat_event("PROVIDER_REGISTERED", provider_name=req.providerName)
         return response.json()
@@ -298,7 +296,7 @@ def orchestrate_search():
 def health_check():
     services = {
         "reservation":   RESERVATION_URL.replace("/api/reserve", ""),
-        "statistics":    STATISTICS_URL.replace("/api/statistics/update", ""),
+        "statistics":    STATISTICS_URL.replace("/api/statistics", ""),
         "provider_stats": PROVIDER_STATS_URL.replace("/api/provider_statistics", ""),
     }
     def check(name, url):

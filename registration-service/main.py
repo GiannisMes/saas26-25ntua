@@ -41,7 +41,7 @@ class ProviderResponse(BaseModel):
 
 
 # --- 1. ΕΓΓΡΑΦΗ ΠΑΡΟΧΟΥ ---
-@app.post("/api/register")
+@app.post("/api/registration")
 def register_provider(req: ProviderRegJSON):
     
     # ΒΗΜΑ 1: Health check - Δοκιμαστική κλήση στο API του παρόχου
@@ -78,7 +78,7 @@ def register_provider(req: ProviderRegJSON):
 
 
 # --- 2. ΛΙΣΤΑ ΠΑΡΟΧΩΝ ---
-@app.get("/api/providers")
+@app.get("/api/registration/providers")
 def list_providers():
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
@@ -94,7 +94,7 @@ def list_providers():
 
 
 # --- 3. ΣΤΟΙΧΕΙΑ ΣΥΓΚΕΚΡΙΜΕΝΟΥ ΠΑΡΟΧΟΥ ---
-@app.get("/api/providers/{provider_name}")
+@app.get("/api/registration/providers/{provider_name}")
 def get_provider(provider_name: str):
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
@@ -114,7 +114,7 @@ def get_provider(provider_name: str):
 
 
 # --- 4. ΔΙΑΓΡΑΦΗ ΠΑΡΟΧΟΥ ---
-@app.delete("/api/providers/{provider_name}")
+@app.delete("/api/registration/providers/{provider_name}")
 def delete_provider(provider_name: str):
     db = get_db_connection()
     cursor = db.cursor()
