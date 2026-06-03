@@ -2,7 +2,6 @@ import L from 'leaflet'
 
 const PROVIDER_COLORS = {
   redplug:   '#ef4444',
-  greeplug:  '#22c55e',
   greenplug: '#22c55e',
   blueplug:  '#3b82f6',
 }

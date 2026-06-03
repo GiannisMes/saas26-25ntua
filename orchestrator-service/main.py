@@ -293,6 +293,7 @@ def orchestrate_search():
         return search_results
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=503, detail=f"Το Search Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
+    
 @app.get("/health")
 def health_check():
     services = {

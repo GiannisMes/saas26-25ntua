@@ -38,6 +38,7 @@ docker compose -f registration-service/docker-compose.yaml up -d
 docker compose -f provider-statistics-service/docker-compose.yaml up -d
 docker compose -f statistics-service/docker-compose.yaml up -d
 docker compose -f invoice-service/docker-compose.yaml up -d
+docker network create shared-api-network
 cd frontend && npm install && npm run dev
 ```
 
@@ -54,95 +55,6 @@ cd frontend && npm install && npm run dev
 | `green plug` | `green plug` | Provider (greenPlug) |
 | `blue plug` | `blue plug` | Provider (bluePlug) |
 | οτιδήποτε άλλο | οτιδήποτε | User |
-
----
-
-## Αλλαγές Frontend — Session 03/06/2026
-
-### Νέα αρχεία
-
-- `frontend/src/context/AuthContext.jsx` — Role-based auth με localStorage
-- `frontend/src/pages/Login.jsx` — Login page με hints για credentials
-- `frontend/src/components/PointPanel.jsx` — Reusable info panel για charging points
-- `frontend/src/components/markerIcon.js` — Custom SVG colored markers ανά provider
-- `frontend/src/context/useProviders.js` — Provider capabilities (hardcoded από OpenAPI specs)
-
-### Τροποποιημένα αρχεία Frontend
-
-**`frontend/src/App.jsx`**
-- Role-based routing: admin → `/admin`, provider → `/provider/dashboard`, user → `/`
-- `ProtectedRoute` με `roleHome()` για αποφυγή infinite redirect loops
-- `NavLink` component με active tab highlighting (πράσινο underline)
-- Navbar ανά role: user / provider / admin με διαφορετικά links
-- Timezone-aware timestamps παντού (`endTime + 'Z'` για σωστό UTC parsing)
-
-**`frontend/src/pages/MapSearch.jsx`** (User χάρτης)
-- Split layout: χάρτης αριστερά + PointPanel δεξιά
-- Colored SVG markers ανά provider (κόκκινο/πράσινο/μπλε)
-- Click tracking → `POST /api/orchestrator/click`
-- Reserve button με εκτιμώμενο κόστος (τιμή × ισχύς × 1h)
-
-**`frontend/src/pages/ProviderDashboard.jsx`**
-- Tab navigation μέσω `?tab=map|stats|invoices|reservations`
-- Map tab: μόνο σημεία του συγκεκριμένου provider
-- Stats tab: KPIs (Clicks, Κρατήσεις, Σύνολο events) + κατάσταση σημείων (live, δυναμικά statuses) + ημερήσια δραστηριότητα
-- Invoices tab: σωστά field names (`invoice_id`, `billing_month`, `billing_year`, `total_points`, `price_per_point`)
-- Reservations tab: κρατήσεις από DB φιλτραρισμένες ανά provider, active/cancelled toggle
-
-**`frontend/src/pages/AdminDashboard.jsx`**
-- Tab: **Χάρτης** — χάρτης με όλους τους providers, legend, PointPanel, reserve button
-- Tab: **Στατιστικά** — KPI cards + bar charts ανά provider + ημερήσια δραστηριότητα + event breakdown
-- Tab: **Υγεία** — όλα τα 7 services (orchestrator/reservation/search/registration/provider_stats/statistics/invoice) με UP/DOWN, parallel health checks, refresh button
-- Tab: **Πάροχοι** — δυναμικά statuses (available/reserved/held/malfunction/offline/charging) που αθροίζουν σωστά στο σύνολο, κουμπί παραγωγής invoice ανά provider
-- Tab: **Κρατήσεις** — διαχείριση κρατήσεων, active by default, cancelled/ληγμένες on demand toggle, αναλυτικές πληροφορίες σημείου (από join με search data)
-
-**`frontend/src/pages/UserDashboard.jsx`**
-- Πλήρης υλοποίηση "Κρατήσεις μου"
-- Fetch από `/api/orchestrator/reservations/user/{userId}`
-- Cross-reference με search data για address, τιμή, ισχύς, connector
-- HTML entity decode για διευθύνσεις (`&amp;` → `&`)
-- Κουμπί ακύρωσης κράτησης
-- Active/cancelled toggle
-
-**`frontend/src/components/PointPanel.jsx`**
-- Εκτιμώμενο κόστος κράτησης πριν το reserve button
-
----
-
-## Αλλαγές Backend — Session 03/06/2026
-
-### orchestrator-service/main.py
-
-**Νέα endpoints:**
-- `POST /api/orchestrator/click` — Click tracking (global + provider stats, async)
-- `GET /api/orchestrator/statistics/global` — Καθολικά στατιστικά (parallel calls)
-- `GET /api/orchestrator/statistics/provider/{name}/detailed` — Αναλυτικά στατιστικά ανά provider
-- `GET /api/orchestrator/admin/reservations` — Λίστα όλων των κρατήσεων (admin)
-- `PUT /api/orchestrator/admin/reservations/{id}/cancel` — Ακύρωση χωρίς userId check
-- `GET /api/orchestrator/reservations/user/{user_id}` — Κρατήσεις ανά χρήστη
-
-**Performance βελτιώσεις:**
-- `send_stat_event()` → non-blocking background thread (δεν καθυστερεί το response)
-- `send_provider_stat()` → non-blocking background thread
-- `/health` → parallel checks με ThreadPoolExecutor (από 6s → 2s)
-- `/statistics/global` → 2 parallel requests
-- `orchestrate_search` → fix double `.json()` bug
-
-### reservation-service/main.py
-
-**Νέα endpoints:**
-- `GET /api/reservations/user/{user_id}` — Κρατήσεις ανά χρήστη
-- `GET /api/admin/reservations` — Λίστα όλων + auto-expire
-- `PUT /api/admin/reservations/{id}/cancel` — Admin cancel (bypass userId check)
-
-**Bug fixes:**
-- Auto-expire: `UPDATE ... SET status='CANCELLED' WHERE endTime < NOW()` πριν από κάθε fetch
-- Fix null endTime: αν ο provider δεν επιστρέψει endTime, υπολογίζεται ως `now + duration`
-
-### search_service/main.py
-
-**Performance:**
-- Parallel provider fetching με `ThreadPoolExecutor` — από sequential (3×5s=15s) σε parallel (max 5s)
 
 ---
 
