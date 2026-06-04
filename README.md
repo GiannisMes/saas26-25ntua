@@ -11,15 +11,15 @@
 | Service | Port | Περιγραφή |
 |---|---|---|
 | orchestrator-service | 8080 | Κεντρικός συντονιστής, proxy για όλες τις κλήσεις |
-| reservation-service | 8083 | Κρατήσεις + DB (MySQL) |
-| search-service | 8087 | Αναζήτηση σημείων από εξωτερικούς παρόχους |
-| registration-service | 8082 | Εγγραφή παρόχων |
 | provider-statistics-service | 8081 | Στατιστικά ανά πάροχο |
+| registration-service | 8082 | Εγγραφή παρόχων |
+| reservation-service | 8083 | Κρατήσεις + DB (MySQL) |
 | statistics-service | 8084 | Καθολικά στατιστικά (GlobalEvents) |
 | invoice-service | 8085 | Τιμολόγια παρόχων |
+| search-service | 8086 | Αναζήτηση σημείων από εξωτερικούς παρόχους |
 | frontend | 3000 | React + Vite UI |
 
-**Εξωτερικοί πάροχοι** (NTUA VPN απαιτείται):
+**Εξωτερικοί πάροχοι** (Απαιτείται σύνδεση στο δίκτυο του NTUA (φυσική ή με VPN)):
 - `redPlug` → `davinci.softlab.ntua.gr/saas26/redPlug/api`
 - `greenPlug` → `davinci.softlab.ntua.gr/saas26/greenPlug/api`
 - `bluePlug` → `davinci.softlab.ntua.gr/saas26/bluePlug/api`
@@ -28,16 +28,16 @@
 
 ## Εκκίνηση
 
-Κάθε service έχει το δικό του `docker-compose.yml`. Εκκίνηση όλων:
+Κάθε service έχει το δικό του `docker-compose.yaml`. Εκκίνηση όλων:
 
 ```bash
-docker compose -f orchestrator-service/docker-compose.yaml up -d
-docker compose -f reservation-service/docker-compose.yml up -d
-docker compose -f search_service/docker-compose.yaml up -d
-docker compose -f registration-service/docker-compose.yaml up -d
-docker compose -f provider-statistics-service/docker-compose.yaml up -d
-docker compose -f statistics-service/docker-compose.yaml up -d
-docker compose -f invoice-service/docker-compose.yaml up -d
+docker compose -f orchestrator-service/docker-compose.yaml up -d --build
+docker compose -f reservation-service/docker-compose.yaml up -d --build
+docker compose -f search_service/docker-compose.yaml up -d --build
+docker compose -f registration-service/docker-compose.yaml up -d --build
+docker compose -f provider-statistics-service/docker-compose.yaml up -d --build
+docker compose -f statistics-service/docker-compose.yaml up -d --build
+docker compose -f invoice-service/docker-compose.yaml up -d --build
 docker network create shared-api-network
 cd frontend && npm install && npm run dev
 ```

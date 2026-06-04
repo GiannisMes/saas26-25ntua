@@ -19,7 +19,7 @@ services:
     build: .
     container_name: stats_api
     ports:
-      - "8084:8000"
+      - "8084:8084"
     volumes:
       - .:/app
     environment:

@@ -13,12 +13,12 @@ logger = logging.getLogger("orchestrator")
 
 app = FastAPI()
 
-RESERVATION_URL = "http://reservation_api:8000/api/reserve"
-STATISTICS_URL = "http://stats_api:8000/api/statistics"
-PROVIDER_STATS_URL = "http://prov_stats_api:8000/api/provider_statistics"
-REGISTRATION_URL = "http://reg_app:8000/api/registration"
-SEARCH_URL = "http://search_api:8000/api/search"
-INVOICE_URL = "http://invoice_api:8000/api/invoices"
+PROVIDER_STATS_URL = "http://prov_stats_api:8081/api/provider_statistics"
+REGISTRATION_URL = "http://reg_app:8082/api/registration"
+RESERVATION_URL = "http://reservation_api:8083/api/reserve"
+STATISTICS_URL = "http://stats_api:8084/api/statistics"
+INVOICE_URL = "http://invoice_api:8085/api/invoices"
+SEARCH_URL = "http://search_api:8086/api/search"
 
 def _do_send_stat(payload):
     try:
@@ -298,6 +298,9 @@ def health_check():
         "reservation":   RESERVATION_URL.replace("/api/reserve", ""),
         "statistics":    STATISTICS_URL.replace("/api/statistics", ""),
         "provider_stats": PROVIDER_STATS_URL.replace("/api/provider_statistics", ""),
+        "registration":   REGISTRATION_URL.replace("/api/registration", ""),
+        "search":         SEARCH_URL.replace("/api/search", ""),
+        "invoice":        INVOICE_URL.replace("/api/invoices", ""),
     }
     def check(name, url):
         try:
@@ -308,6 +311,7 @@ def health_check():
     with ThreadPoolExecutor(max_workers=len(services)) as ex:
         results = ex.map(lambda item: check(*item), services.items())
     status = dict(results)
+    status["orchestrator"] = "UP"
     status["pending_retry_events"] = len(pending_events)
     return status
     

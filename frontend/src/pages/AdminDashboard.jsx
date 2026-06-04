@@ -26,25 +26,32 @@ const SERVICES = [
 ]
 
 async function fetchHealthStatus() {
-  const [healthRes, providersRes, searchRes, invoiceRes] = await Promise.allSettled([
-    axios.get('/health'),
-    axios.get('/api/orchestrator/providers'),
-    axios.post('/api/orchestrator/search'),
-    axios.get('/api/orchestrator/invoices/provider/redPlug'),
-  ])
+  try {
+    const healthRes = await axios.get('/health');
+    const h = healthRes.data;
 
-  const h = healthRes.status === 'fulfilled' ? healthRes.value.data : {}
-
-  return {
-    orchestrator:   healthRes.status === 'fulfilled' ? 'UP' : 'DOWN',
-    reservation:    h.reservation    || 'DOWN',
-    search:         searchRes.status === 'fulfilled' ? 'UP' : 'DOWN',
-    registration:   providersRes.status === 'fulfilled' ? 'UP' : 'DOWN',
-    provider_stats: h.provider_stats || 'DOWN',
-    statistics:     h.statistics     || 'DOWN',
-    invoice:        invoiceRes.status === 'fulfilled' ||
-                    (invoiceRes.reason?.response?.status < 500) ? 'UP' : 'DOWN',
-    pending_retry_events: h.pending_retry_events ?? null,
+    return {
+      orchestrator:   h.orchestrator   || 'DOWN',
+      reservation:    h.reservation    || 'DOWN',
+      search:         h.search         || 'DOWN',
+      registration:   h.registration   || 'DOWN',
+      provider_stats: h.provider_stats || 'DOWN',
+      statistics:     h.statistics     || 'DOWN',
+      invoice:        h.invoice        || 'DOWN',
+      pending_retry_events: h.pending_retry_events ?? null,
+    }
+  } catch (error) {
+    // If the orchestrator itself is dead, everything is unreachable
+    return {
+      orchestrator: 'DOWN',
+      reservation: 'DOWN',
+      search: 'DOWN',
+      registration: 'DOWN',
+      provider_stats: 'DOWN',
+      statistics: 'DOWN',
+      invoice: 'DOWN',
+      pending_retry_events: null,
+    };
   }
 }
 
