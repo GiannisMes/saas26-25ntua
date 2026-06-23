@@ -16,13 +16,13 @@ L.Icon.Default.mergeOptions({
 })
 
 const SERVICES = [
-  { key: 'orchestrator',    label: 'Orchestrator',     port: 8080 },
-  { key: 'reservation',     label: 'Reservation',      port: 8083 },
-  { key: 'search',          label: 'Search',           port: 8087 },
-  { key: 'registration',    label: 'Registration',     port: 8082 },
-  { key: 'provider_stats',  label: 'Provider Stats',   port: 8081 },
-  { key: 'statistics',      label: 'Statistics',       port: 8084 },
-  { key: 'invoice',         label: 'Invoice',          port: 8085 },
+  { key: 'orchestrator',    label: 'Orchestrator'},
+  { key: 'provider_stats',  label: 'Provider Stats'},
+  { key: 'registration',    label: 'Registration'},
+  { key: 'reservation',     label: 'Reservation'},
+  { key: 'statistics',      label: 'Statistics'},
+  { key: 'invoice',         label: 'Invoice'},
+  { key: 'search',          label: 'Search'},
 ]
 
 async function fetchHealthStatus() {
@@ -210,7 +210,7 @@ export default function AdminDashboard() {
 
                 {/* Ανα παροχο */}
                 <div className="bg-white border rounded-xl p-5">
-                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Κρατησεις ανα Παροχο</h3>
+                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Κρατήσεις ανά Πάροχο</h3>
                   <div className="space-y-3">
                     {globalStats.by_provider?.map(({ provider_name, count }) => {
                       const max = Math.max(...(globalStats.by_provider?.map(p => p.count) || [1]))
@@ -230,7 +230,7 @@ export default function AdminDashboard() {
 
                 {/* Ημερησια δραστηριοτητα */}
                 <div className="bg-white border rounded-xl p-5">
-                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Ημερησια Δραστηριοτητα</h3>
+                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Ημερήσια Δραστηριότητα</h3>
                   <div className="space-y-2">
                     {globalStats.daily_breakdown?.map(({ day, count }) => {
                       const max = Math.max(...(globalStats.daily_breakdown?.map(d => d.count) || [1]))
@@ -281,17 +281,16 @@ export default function AdminDashboard() {
             </div>
 
             {!health ? (
-              <p className="text-gray-400 text-sm">Φορτωση...</p>
+              <p className="text-gray-400 text-sm">Φόρτωση...</p>
             ) : (
               <div className="space-y-2">
-                {SERVICES.map(({ key, label, port }) => {
+                {SERVICES.map(({ key, label}) => {
                   const status = health[key]
                   const up = status === 'UP'
                   return (
                     <div key={key} className="flex items-center justify-between p-4 rounded-lg border bg-white">
                       <div>
                         <p className="font-semibold text-gray-900">{label}</p>
-                        <p className="text-xs text-gray-400">:{port}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className={`w-2.5 h-2.5 rounded-full ${up ? 'bg-green-500' : 'bg-red-500'}`} />

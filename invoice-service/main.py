@@ -7,22 +7,19 @@ from datetime import datetime
 
 app = FastAPI(title="Invoice Service", description="Διαχείριση μηνιαίων συνδρομών")
 
-# Στοιχεία σύνδεσης από το περιβάλλον
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_USER = os.getenv("DB_USER", "root")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "")
-DB_NAME = os.getenv("DB_NAME", "invoice_db")
-
 # Σταθερή χρέωση ανά σημείο φόρτισης (π.χ. 10 ευρώ)
 PRICE_PER_POINT = 10.00
 
 def get_db_connection():
     return mysql.connector.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        database=DB_NAME
+        host="inv_db", 
+        user="invoice_user",
+        password="invoice_password",
+        database="invoice_db"
     )
+
+# Σταθερή χρέωση ανά σημείο φόρτισης (π.χ. 10 ευρώ)
+PRICE_PER_POINT = 10.00
 
 # --- Pydantic Models ---
 class InvoiceCreateReq(BaseModel):

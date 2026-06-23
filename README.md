@@ -10,14 +10,14 @@
 
 | Service | Port | Περιγραφή |
 |---|---|---|
-| orchestrator-service | 8080 | Κεντρικός συντονιστής, proxy για όλες τις κλήσεις |
+| frontend | 3325 | React + Vite UI |
+| orchestrator-service | 4425 | Κεντρικός συντονιστής, proxy για όλες τις κλήσεις |
 | provider-statistics-service | 8081 | Στατιστικά ανά πάροχο |
 | registration-service | 8082 | Εγγραφή παρόχων |
 | reservation-service | 8083 | Κρατήσεις + DB (MySQL) |
 | statistics-service | 8084 | Καθολικά στατιστικά (GlobalEvents) |
 | invoice-service | 8085 | Τιμολόγια παρόχων |
 | search-service | 8086 | Αναζήτηση σημείων από εξωτερικούς παρόχους |
-| frontend | 3000 | React + Vite UI |
 
 **Εξωτερικοί πάροχοι** (Απαιτείται σύνδεση στο δίκτυο του NTUA (φυσική ή με VPN)):
 - `redPlug` → `davinci.softlab.ntua.gr/saas26/redPlug/api`
@@ -42,7 +42,7 @@ docker network create shared-api-network
 cd frontend && npm install && npm run dev
 ```
 
-Το frontend είναι διαθέσιμο στο `http://localhost:3000`.
+Το frontend είναι διαθέσιμο στο `http://localhost:3325`.
 
 ---
 

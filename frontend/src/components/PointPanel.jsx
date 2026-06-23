@@ -27,7 +27,7 @@ export default function PointPanel({ point, providerInfo, onClose, onReserve, sh
   const s = STATUS[point.status] || { label: point.status, cls: 'bg-gray-400' }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
       <div className="p-5 border-b">
         <div className="flex justify-between items-start gap-2">
@@ -74,7 +74,7 @@ export default function PointPanel({ point, providerInfo, onClose, onReserve, sh
         <div className="p-4 border-t space-y-2">
           {point.pricePerKwh && point.cap && (
             <div className="flex items-center justify-between text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
-              <span>Εκτιμωμενο κοστος (60 λεπτα)</span>
+              <span>Εκτιμώμενο κόστος (60 λεπτά)</span>
               <span className="font-bold text-gray-800">
                 ~{((point.pricePerKwh * point.cap * 1) / 1).toFixed(2)}€
               </span>
@@ -84,7 +84,7 @@ export default function PointPanel({ point, providerInfo, onClose, onReserve, sh
             onClick={() => onReserve(point)}
             className="w-full bg-gray-900 hover:bg-gray-700 text-white font-bold py-2.5 rounded-lg text-sm transition-colors"
           >
-            Κρατηση 60 λεπτων
+            Κράτηση 60 λεπτων
           </button>
         </div>
       )}

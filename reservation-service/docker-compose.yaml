@@ -20,10 +20,8 @@ services:
   res_app:
     build: .
     container_name: reservation_api
-    ports:
-      - "8083:8083"  # Στο διάγραμμά σας το Reservation Service ακούει στη θύρα 8083
     volumes:
-      - .:/app       # Αυτό συνδέει τον φάκελό σου με το container για να βλέπει τις αλλαγές στον κώδικα live
+      - .:/app
     environment:
       - DB_HOST=res_db
       - DB_USER=root

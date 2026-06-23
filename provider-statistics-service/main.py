@@ -14,11 +14,13 @@ DB_NAME = os.getenv("DB_NAME", "provider_statistics_db")
 
 def get_db_connection():
     return mysql.connector.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        database=DB_NAME
+        host="prov_stats_db", 
+        user="prov_stats_user",
+        password="prov_stats_password",
+        database="provider_statistics_db"
     )
+
+
 
 class EventType(str, Enum):
     Click = "Click"

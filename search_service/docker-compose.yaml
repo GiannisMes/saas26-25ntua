@@ -2,12 +2,8 @@ services:
   search_api:
     build: .
     container_name: search_api
-    ports:
-      - "8086:8086" # Η ξεχωριστή πόρτα του δικού σου service
     volumes:
       - .:/app
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     networks:
       - shared-api-network
 

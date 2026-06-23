@@ -26,10 +26,11 @@ class ReservationResJSON(BaseModel):
 def get_db_connection():
     return mysql.connector.connect(
         host="res_db", 
-        user="root",
-        password="root_password",
+        user="res_user",
+        password="res_password",
         database="reservation_db"
     )
+
 def cancel_provider_reservation(provider: str, point_id: str, headers: dict):
     """Saga compensating action: ακυρώνει την κράτηση στον provider αν αποτύχει η βάση"""
     try:

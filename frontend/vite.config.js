@@ -6,14 +6,14 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     host: true,
-    port: 3000,
+    port: 3325,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:4425',
         changeOrigin: true
       },
       '/health': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:4425',
         changeOrigin: true
       }
     }

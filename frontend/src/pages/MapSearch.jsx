@@ -70,14 +70,14 @@ export default function MapSearch() {
       <div className="w-80 bg-white border-l shadow-lg flex flex-col overflow-hidden">
         <div className="px-5 py-3 border-b bg-white">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Σημεια φορτισης</span>
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Σημεία φόρτισης</span>
             <div className="flex items-center gap-2">
               <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{points.length}</span>
               <button onClick={fetchPoints} className="text-xs text-gray-400 hover:text-gray-600 font-bold">↻</button>
             </div>
           </div>
           <div className="flex gap-2 mt-2">
-            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">Κρατησεις</span>
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">Κρατήσεις</span>
             <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-600">Live</span>
           </div>
         </div>
