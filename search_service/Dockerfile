@@ -1,17 +1,17 @@
-# 1. Παίρνουμε μια έτοιμη, ελαφριά έκδοση της Python
+# 1.
 FROM python:3.11-slim
 
-# 2. Φτιάχνουμε έναν φάκελο εργασίας μέσα στο container
+# 2.
 WORKDIR /app
 
-# 3. Αντιγράφουμε ΠΡΩΤΑ το requirements.txt (για να εκμεταλλευτούμε την cache του Docker)
+# 3.
 COPY requirements.txt .
 
-# 4. Εγκαθιστούμε τις βιβλιοθήκες (FastAPI, requests, uvicorn κλπ.)
+# 4. 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Αντιγράφουμε τον υπόλοιπο κώδικά μας (main.py, schemas.py)
+# 5. 
 COPY . .
 
-# 7. Η εντολή που θα τρέχει αυτόματα όταν σηκώνεται το container
+# 6. 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8086"]
