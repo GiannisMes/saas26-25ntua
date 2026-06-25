@@ -280,10 +280,10 @@ def orchestrate_delete_provider(provider_name: str):
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Το Registration Service δεν είναι διαθέσιμο. Σφάλμα: {str(e)}")
 
-@app.post("/api/orchestrator/search")
+@app.get("/api/orchestrator/search")
 def orchestrate_search():
     try:
-        response = requests.post(SEARCH_URL)
+        response = requests.get(SEARCH_URL)
         if response.status_code != 200:
             raise HTTPException(status_code=response.status_code, detail="Σφάλμα στο Search Service")
         search_results = response.json()

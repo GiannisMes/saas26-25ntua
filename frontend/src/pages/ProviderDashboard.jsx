@@ -47,7 +47,7 @@ export default function ProviderDashboard() {
   const fetchAll = async () => {
     const [statsRes, searchRes, invRes, resRes] = await Promise.allSettled([
       axios.get(`/api/orchestrator/statistics/provider/${providerKey}/detailed`),
-      axios.post('/api/orchestrator/search'),
+      axios.get('/api/orchestrator/search'),
       axios.get(`/api/orchestrator/invoices/provider/${providerKey}`),
       axios.get('/api/orchestrator/admin/reservations'),
     ])
@@ -122,7 +122,7 @@ export default function ProviderDashboard() {
         <div className="flex-1 overflow-auto p-6">
           <div className="max-w-2xl mx-auto space-y-5">
             {!stats ? (
-              <p className="text-gray-400 text-sm">Φορτωση...</p>
+              <p className="text-gray-400 text-sm">Φόρτωση...</p>
             ) : (
               <>
                 {/* KPIs */}
@@ -133,28 +133,28 @@ export default function ProviderDashboard() {
                   </div>
                   <div className="bg-green-50 rounded-xl p-5 text-center">
                     <p className="text-3xl font-bold text-green-600">{stats.summary?.Reservation || 0}</p>
-                    <p className="text-xs text-gray-500 mt-1">Κρατησεις</p>
+                    <p className="text-xs text-gray-500 mt-1">Κρατήσεις</p>
                   </div>
                   <div className="bg-gray-50 rounded-xl p-5 text-center">
                     <p className="text-3xl font-bold text-gray-700">{stats.total_events || 0}</p>
-                    <p className="text-xs text-gray-500 mt-1">Συνολικα events</p>
+                    <p className="text-xs text-gray-500 mt-1">Συνολικά events</p>
                   </div>
                 </div>
 
                 {/* Σημεια παροχου */}
                 <div className="bg-white border rounded-xl p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Κατασταση σημειων (live)</h3>
-                    <span className="text-xs text-gray-400">{points.length} συνολο</span>
+                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Κατάσταση σημείων (live)</h3>
+                    <span className="text-xs text-gray-400">{points.length} σύνολο</span>
                   </div>
                   {(() => {
                     const STATUS_MAP = {
-                      available:   { label: 'Διαθεσιμα', color: 'text-green-600' },
-                      reserved:    { label: 'Κρατημενα', color: 'text-amber-500' },
-                      held:        { label: 'Κρατημενα', color: 'text-amber-500' },
-                      malfunction: { label: 'Βλαβη',     color: 'text-red-500'   },
+                      available:   { label: 'Διαθέσιμα', color: 'text-green-600' },
+                      reserved:    { label: 'Κρατημένα', color: 'text-amber-500' },
+                      held:        { label: 'Κρατημένα', color: 'text-amber-500' },
+                      malfunction: { label: 'Βλάβη',     color: 'text-red-500'   },
                       offline:     { label: 'Offline',   color: 'text-gray-400'  },
-                      charging:    { label: 'Φορτιζει',  color: 'text-blue-500'  },
+                      charging:    { label: 'Φορτίζει',  color: 'text-blue-500'  },
                     }
                     const counts = points.reduce((acc, p) => { acc[p.status] = (acc[p.status] || 0) + 1; return acc }, {})
                     const entries = Object.entries(counts).sort((a, b) => b[1] - a[1])
@@ -174,17 +174,17 @@ export default function ProviderDashboard() {
                     )
                   })()}
                   <div className="mt-3 pt-3 border-t flex items-center justify-between">
-                    <span className="text-xs text-gray-500">Κρατησεις μεσω saasPlug</span>
+                    <span className="text-xs text-gray-500">Κρατήσεις μέσω saasPlug</span>
                     <span className="text-sm font-bold text-blue-600">
                       {reservations.filter(r => r.status === 'ACTIVE' && points.some(p => String(p.pointId) === String(r.pointId))).length}
                     </span>
                   </div>
                 </div>
 
-                {/* Ημερησια δραστηριοτητα */}
+                {/* Ημερήσια δραστηριότητα */}
                 {stats.daily_breakdown?.length > 0 && (
                   <div className="bg-white border rounded-xl p-5">
-                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Ημερησια δραστηριοτητα</h3>
+                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Ημερήσια δραστηριότητα</h3>
                     <div className="space-y-2">
                       {stats.daily_breakdown.map(({ day, count }) => {
                         const max = Math.max(...stats.daily_breakdown.map(d => d.count))
@@ -234,8 +234,8 @@ export default function ProviderDashboard() {
                       </div>
                     </div>
                     <div className="flex gap-4 text-xs text-gray-500 border-t pt-2">
-                      <span>Σημεια: <strong className="text-gray-700">{inv.total_points}</strong></span>
-                      <span>Τιμη/σημειο: <strong className="text-gray-700">{inv.price_per_point}€</strong></span>
+                      <span>Σημεία: <strong className="text-gray-700">{inv.total_points}</strong></span>
+                      <span>Τιμή/σημείο: <strong className="text-gray-700">{inv.price_per_point}€</strong></span>
                     </div>
                   </div>
                 ))}
@@ -257,11 +257,11 @@ export default function ProviderDashboard() {
                   const inactive = myRes.filter(r => r.status === 'CANCELLED' || new Date(r.endTime + 'Z') < new Date())
                   return (
                     <>
-                      <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-bold">{active.length} ενεργες</span>
+                      <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-bold">{active.length} ενεργές</span>
                       {inactive.length > 0 && (
                         <button onClick={() => setShowCancelled(v => !v)}
                           className={`text-xs px-2.5 py-0.5 rounded-full font-bold border transition-colors ${showCancelled ? 'bg-gray-200 text-gray-700 border-gray-300' : 'bg-white text-gray-400 border-gray-200 hover:border-gray-300'}`}>
-                          {showCancelled ? 'Κρυψε' : `+ ${inactive.length} ακυρωμενες/ληγμενες`}
+                          {showCancelled ? 'Κρύψε' : `+ ${inactive.length} ακυρωμένες/ληγμένες`}
                         </button>
                       )}
                     </>
@@ -278,7 +278,7 @@ export default function ProviderDashboard() {
                 if (expired || r.status === 'CANCELLED') return showCancelled
                 return true
               })
-              if (visible.length === 0) return <p className="text-gray-400 text-sm">Δεν υπαρχουν κρατησεις.</p>
+              if (visible.length === 0) return <p className="text-gray-400 text-sm">Δεν υπάρχουν κρατήσεις.</p>
               return (
                 <div className="space-y-2">
                   {visible.map(r => {
@@ -295,10 +295,10 @@ export default function ProviderDashboard() {
                           </span>
                         </div>
                         <div className="grid grid-cols-2 gap-x-6 text-xs text-gray-500">
-                          <span>Χρηστης: <strong className="text-gray-700">{r.userID}</strong></span>
-                          {pt?.address && <span>Διευθυνση: <strong className="text-gray-700">{pt.address}</strong></span>}
-                          <span>Εναρξη: <strong className="text-gray-700">{fmtDate(r.startTime)}</strong></span>
-                          <span>Ληξη: <strong className="text-gray-700">{fmtDate(r.endTime)}</strong></span>
+                          <span>Χρήστης: <strong className="text-gray-700">{r.userID}</strong></span>
+                          {pt?.address && <span>Διεύθυνση: <strong className="text-gray-700">{pt.address}</strong></span>}
+                          <span>Έναρξη: <strong className="text-gray-700">{fmtDate(r.startTime)}</strong></span>
+                          <span>Λήξη: <strong className="text-gray-700">{fmtDate(r.endTime)}</strong></span>
                         </div>
                       </div>
                     )

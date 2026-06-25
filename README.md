@@ -31,15 +31,7 @@
 Κάθε service έχει το δικό του `docker-compose.yaml`. Εκκίνηση όλων:
 
 ```bash
-docker compose -f orchestrator-service/docker-compose.yaml up -d --build
-docker compose -f reservation-service/docker-compose.yaml up -d --build
-docker compose -f search_service/docker-compose.yaml up -d --build
-docker compose -f registration-service/docker-compose.yaml up -d --build
-docker compose -f provider-statistics-service/docker-compose.yaml up -d --build
-docker compose -f statistics-service/docker-compose.yaml up -d --build
-docker compose -f invoice-service/docker-compose.yaml up -d --build
-docker network create shared-api-network
-cd frontend && npm install && npm run dev
+deploy.sh
 ```
 
 Το frontend είναι διαθέσιμο στο `http://localhost:3325`.

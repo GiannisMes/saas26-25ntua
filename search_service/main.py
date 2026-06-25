@@ -75,7 +75,7 @@ def fetch_provider(name, info):
         return []
 
 
-@app.post("/api/search", response_model=List[PointResJSON])
+@app.get("/api/search", response_model=List[PointResJSON])
 def search_points():
     list_points = []
     with ThreadPoolExecutor(max_workers=len(PROVIDERS)) as executor:

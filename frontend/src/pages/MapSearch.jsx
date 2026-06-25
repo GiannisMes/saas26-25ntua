@@ -22,7 +22,7 @@ export default function MapSearch() {
   const [selected, setSelected] = useState(null)
 
   const fetchPoints = () => {
-    axios.post('/api/orchestrator/search')
+    axios.get('/api/orchestrator/search')
       .then(res => setPoints(res.data || []))
       .catch(() => {})
   }

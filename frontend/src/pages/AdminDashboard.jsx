@@ -98,7 +98,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     refreshHealth()
     axios.get('/api/orchestrator/providers').then(r => setProviders(r.data?.providers || [])).catch(() => {})
-    axios.post('/api/orchestrator/search').then(r => setPoints(r.data || [])).catch(() => {})
+    axios.get('/api/orchestrator/search').then(r => setPoints(r.data || [])).catch(() => {})
     fetchReservations()
     axios.get('/api/orchestrator/statistics/global').then(r => setGlobalStats(r.data)).catch(() => {})
   }, [])
@@ -162,7 +162,7 @@ export default function AdminDashboard() {
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Ολα τα σημεια</span>
                 <div className="flex items-center gap-2">
                   <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{points.length}</span>
-                  <button onClick={() => axios.post('/api/orchestrator/search').then(r => setPoints(r.data || [])).catch(() => {})}
+                  <button onClick={() => axios.get('/api/orchestrator/search').then(r => setPoints(r.data || [])).catch(() => {})}
                     className="text-xs text-gray-400 hover:text-gray-600 font-bold">↻</button>
                 </div>
               </div>

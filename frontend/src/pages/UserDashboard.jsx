@@ -28,7 +28,7 @@ export default function UserDashboard() {
     setLoading(true)
     const [resRes, searchRes] = await Promise.allSettled([
       axios.get(`/api/orchestrator/reservations/user/${user?.name}`),
-      axios.post('/api/orchestrator/search'),
+      axios.get('/api/orchestrator/search'),
     ])
     if (resRes.status === 'fulfilled') setReservations(resRes.value.data?.reservations || [])
     if (searchRes.status === 'fulfilled') setPoints(searchRes.value.data || [])
