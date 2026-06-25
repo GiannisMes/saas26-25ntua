@@ -62,28 +62,28 @@ function Navbar() {
 
       {user.role === 'user' && (
         <>
-          <NavLink to="/" active={path === '/'}>Χαρτης</NavLink>
-          <NavLink to="/user" active={path === '/user'}>Κρατησεις μου</NavLink>
+          <NavLink to="/" active={path === '/'}>Χάρτης</NavLink>
+          <NavLink to="/user" active={path === '/user'}>Κρατήσεις μου</NavLink>
         </>
       )}
 
       {user.role === 'provider' && (
         <>
-          <NavLink to="/provider/dashboard?tab=map" active={path.startsWith('/provider') && (!tab || tab === 'map')}>Χαρτης</NavLink>
-          <NavLink to="/provider/dashboard?tab=stats" active={tab === 'stats'}>Στατιστικα</NavLink>
+          <NavLink to="/provider/dashboard?tab=map" active={path.startsWith('/provider') && (!tab || tab === 'map')}>Χάρτης</NavLink>
+          <NavLink to="/provider/dashboard?tab=stats" active={tab === 'stats'}>Στατιστικά</NavLink>
           <NavLink to="/provider/dashboard?tab=invoices" active={tab === 'invoices'}>Invoices</NavLink>
-          <NavLink to="/provider/dashboard?tab=reservations" active={tab === 'reservations'}>Κρατησεις</NavLink>
+          <NavLink to="/provider/dashboard?tab=reservations" active={tab === 'reservations'}>Κρατήσεις</NavLink>
         </>
       )}
 
       {user.role === 'admin' && (
         <>
-          <NavLink to="/admin" active={path === '/admin' && !tab}>Χαρτης</NavLink>
-          <NavLink to="/admin?tab=Στατιστικα" active={tab === 'Στατιστικα'}>Στατιστικα</NavLink>
-          <NavLink to="/admin?tab=Υγεια" active={tab === 'Υγεια'}>Υγεια</NavLink>
-          <NavLink to="/admin?tab=Παροχοι" active={tab === 'Παροχοι'}>Παροχοι</NavLink>
-          <NavLink to="/admin?tab=Κρατησεις" active={tab === 'Κρατησεις'}>Κρατησεις</NavLink>
-          <NavLink to="/provider/register" active={path === '/provider/register'}>Νεος Παροχος</NavLink>
+          <NavLink to="/admin" active={path === '/admin' && !tab}>Χάρτης</NavLink>
+          <NavLink to="/admin?tab=Στατιστικά" active={tab === 'Στατιστικά'}>Στατιστικά</NavLink>
+          <NavLink to="/admin?tab=Υγεία" active={tab === 'Υγεία'}>Υγεία</NavLink>
+          <NavLink to="/admin?tab=Πάροχοι" active={tab === 'Πάροχοι'}>Πάροχοι</NavLink>
+          <NavLink to="/admin?tab=Κρατήσεις" active={tab === 'Κρατήσεις'}>Κρατήσεις</NavLink>
+          <NavLink to="/provider/register" active={path === '/provider/register'}>Νέος Πάροχος</NavLink>
         </>
       )}
 

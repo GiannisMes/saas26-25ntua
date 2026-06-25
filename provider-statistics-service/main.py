@@ -20,8 +20,6 @@ def get_db_connection():
         database="provider_statistics_db"
     )
 
-
-
 class EventType(str, Enum):
     Click = "Click"
     Reservation = "Reservation"

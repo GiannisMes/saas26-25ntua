@@ -57,7 +57,7 @@ async function fetchHealthStatus() {
 
 export default function AdminDashboard() {
   const [searchParams] = useSearchParams()
-  const tab = searchParams.get('tab') || 'Χαρτης'
+  const tab = searchParams.get('tab') || 'Χάρτης'
   const { getProviderInfo } = useProviders()
   const [health, setHealth] = useState(null)
   const [healthLoading, setHealthLoading] = useState(false)
@@ -86,12 +86,12 @@ export default function AdminDashboard() {
   }
 
   const handleCancelReservation = async (id) => {
-    if (!confirm('Ακυρωση κρατησης;')) return
+    if (!confirm('Ακύρωση κράτησης;')) return
     try {
       await axios.put(`/api/orchestrator/admin/reservations/${id}/cancel`)
       setReservations(prev => prev.map(r => r.id === id ? { ...r, status: 'CANCELLED' } : r))
     } catch {
-      alert('Σφαλμα ακυρωσης')
+      alert('Σφάλμα ακύρωσης')
     }
   }
 
@@ -112,22 +112,22 @@ export default function AdminDashboard() {
         duration: 60
       })
       if (res.data.success) {
-        alert(`Κρατηση επιτυχης! Ληξη: ${res.data.endTime}`)
+        alert(`Κράτηση επιτυχής! Λήξη: ${res.data.endTime}`)
         setSelected(prev => prev ? { ...prev, status: 'reserved' } : prev)
       } else {
-        alert(`Αποτυχια: ${res.data.errorMessage}`)
+        alert(`Αποτυχία: ${res.data.errorMessage}`)
       }
     } catch {
-      alert('Σφαλμα κρατησης')
+      alert('Σφάλμα κράτησης')
     }
   }
 
   const handleDeleteProvider = async (name) => {
-    if (!confirm(`Διαγραφη παροχου "${name}";`)) return
+    if (!confirm(`Διαγραφή παρόχου "${name}";`)) return
     try {
       await axios.delete(`/api/orchestrator/providers/${name}`)
       setProviders(prev => prev.filter(p => p.providerName !== name))
-    } catch { alert('Σφαλμα διαγραφης') }
+    } catch { alert('Σφάλμα διαγραφής') }
   }
 
   // all statuses per provider from live search data
@@ -141,8 +141,8 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-56px)]">
-      {/* Χαρτης */}
-      {tab === 'Χαρτης' && (
+      {/* Χάρτης */}
+      {tab === 'Χάρτης' && (
         <div className="flex flex-1 overflow-hidden">
           <div className="flex-1">
             <MapContainer center={[37.98, 23.73]} zoom={11} className="h-full w-full">
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
           <div className="w-80 bg-white border-l shadow-lg flex flex-col overflow-hidden">
             <div className="px-5 py-3 border-b">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Ολα τα σημεια</span>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Όλα τα σημεία</span>
                 <div className="flex items-center gap-2">
                   <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{points.length}</span>
                   <button onClick={() => axios.get('/api/orchestrator/search').then(r => setPoints(r.data || [])).catch(() => {})}
@@ -167,7 +167,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="flex gap-2 mt-2">
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">Κρατησεις</span>
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">Κρατήσεις</span>
                 <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-600">Live</span>
               </div>
             </div>
@@ -185,20 +185,20 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Στατιστικα */}
-      {tab === 'Στατιστικα' && (
+      {/* Στατιστικά */}
+      {tab === 'Στατιστικά' && (
         <div className="flex-1 overflow-auto p-6">
           <div className="max-w-3xl mx-auto space-y-6">
             {!globalStats ? (
-              <p className="text-gray-400 text-sm">Φορτωση...</p>
+              <p className="text-gray-400 text-sm">Φόρτωση...</p>
             ) : (
               <>
                 {/* KPI cards */}
                 <div className="grid grid-cols-4 gap-4">
                   {[
-                    { label: 'Συνολικες Αναζητησεις', value: globalStats.by_event_type?.find(e => e.event_type === 'SEARCH_PERFORMED')?.count ?? 0, color: 'text-blue-600', bg: 'bg-blue-50' },
-                    { label: 'Κρατησεις', value: globalStats.total_reservations ?? 0, color: 'text-green-600', bg: 'bg-green-50' },
-                    { label: 'Ακυρωσεις', value: globalStats.by_event_type?.find(e => e.event_type === 'RESERVATION_CANCELLED')?.count ?? 0, color: 'text-red-500', bg: 'bg-red-50' },
+                    { label: 'Συνολικές Αναζητήσεις', value: globalStats.by_event_type?.find(e => e.event_type === 'SEARCH_PERFORMED')?.count ?? 0, color: 'text-blue-600', bg: 'bg-blue-50' },
+                    { label: 'Κρατήσεις', value: globalStats.total_reservations ?? 0, color: 'text-green-600', bg: 'bg-green-50' },
+                    { label: 'Ακυρώσεις', value: globalStats.by_event_type?.find(e => e.event_type === 'RESERVATION_CANCELLED')?.count ?? 0, color: 'text-red-500', bg: 'bg-red-50' },
                     { label: 'Clicks', value: globalStats.by_event_type?.find(e => e.event_type === 'CLICK')?.count ?? 0, color: 'text-purple-600', bg: 'bg-purple-50' },
                   ].map(({ label, value, color, bg }) => (
                     <div key={label} className={`${bg} rounded-xl p-5 text-center`}>
@@ -249,7 +249,7 @@ export default function AdminDashboard() {
 
                 {/* Ολα τα events */}
                 <div className="bg-white border rounded-xl p-5">
-                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Ολα τα Events ({globalStats.total_events})</h3>
+                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Όλα τα Events ({globalStats.total_events})</h3>
                   <div className="space-y-2">
                     {globalStats.by_event_type?.map(({ event_type, count }) => (
                       <div key={event_type} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
@@ -265,8 +265,8 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Υγεια */}
-      {tab === 'Υγεια' && (
+      {/* Υγεία */}
+      {tab === 'Υγεία' && (
         <div className="flex-1 overflow-auto p-6">
           <div className="max-w-2xl mx-auto">
             <div className="flex items-center justify-between mb-4">
@@ -319,12 +319,12 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Παροχοι */}
-      {tab === 'Παροχοι' && (
+      {/* Πάροχοι */}
+      {tab === 'Πάροχοι' && (
         <div className="flex-1 overflow-auto p-6">
           <div className="max-w-2xl mx-auto space-y-4">
             {Object.entries(providerStats).length === 0 ? (
-              <p className="text-gray-400 text-sm">Δεν υπαρχουν διαθεσιμα δεδομενα παροχων.</p>
+              <p className="text-gray-400 text-sm">Δεν υπάρχουν διαθέσιμα δεδομένα παρόχων.</p>
             ) : (
               Object.entries(providerStats).map(([name, s]) => {
                 const registered = providers.find(p => p.providerName === name)
@@ -335,7 +335,7 @@ export default function AdminDashboard() {
                       <div className="flex items-center gap-3">
                         <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: getColor(name) }} />
                         <span className="font-bold text-gray-900">{name}</span>
-                        <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-medium">Κρατησεις</span>
+                        <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-medium">Κρατήσεις</span>
                         <span className="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-medium">Live</span>
                       </div>
                       <div className="flex items-center gap-3">
@@ -392,12 +392,12 @@ export default function AdminDashboard() {
                             })
                             alert(`Invoice παραχθηκε για ${name}`)
                           } catch (e) {
-                            alert(e.response?.data?.detail || 'Σφαλμα παραγωγης invoice')
+                            alert(e.response?.data?.detail || 'Σφάλμα παραγωγής invoice')
                           }
                         }}
                         className="text-xs text-blue-500 hover:text-blue-700 font-medium"
                       >
-                        + Invoice τρεχοντος μηνα
+                        + Invoice τρέχοντος μήνα
                       </button>
                     </div>
                   </div>
@@ -408,15 +408,15 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Κρατησεις */}
-      {tab === 'Κρατησεις' && (
+      {/* Κρατήσεις */}
+      {tab === 'Κρατήσεις' && (
         <div className="flex-1 overflow-auto p-6">
           <div className="max-w-3xl mx-auto">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Διαχειριση Κρατησεων</h2>
+                <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Διαχειίριση Κρατήσεων</h2>
                 <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-bold">
-                  {reservations.filter(r => r.status === 'ACTIVE' && !(new Date(r.endTime + 'Z') < new Date())).length} ενεργες
+                  {reservations.filter(r => r.status === 'ACTIVE' && !(new Date(r.endTime + 'Z') < new Date())).length} ενεργές
                 </span>
                 <button
                   onClick={() => setShowCancelled(v => !v)}
@@ -439,7 +439,7 @@ export default function AdminDashboard() {
             </div>
 
             {reservations.length === 0 ? (
-              <p className="text-gray-400 text-sm">Δεν υπαρχουν κρατησεις.</p>
+              <p className="text-gray-400 text-sm">Δεν υπάρχουν κρατήσεις.</p>
             ) : (
               <div className="space-y-2">
                 {reservations.filter(r => {

@@ -8,7 +8,6 @@ from datetime import datetime
 
 app = FastAPI()
 
-# --- Αντικατάστησε με το δικό σου αληθινό κλειδί ---
 MY_API_KEY = "sk_saas_1bc1bc089068b423332e8c1e" 
 
 class ReservationReqJSON(BaseModel):

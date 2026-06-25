@@ -50,7 +50,7 @@ export default function UserDashboard() {
     <div className="max-w-3xl mx-auto p-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <h1 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Κρατησεις μου</h1>
+          <h1 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Κρατήσεις μου</h1>
           <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-bold">{active.length} ενεργες</span>
           {inactive.length > 0 && (
             <button onClick={() => setShowCancelled(v => !v)}
@@ -68,8 +68,8 @@ export default function UserDashboard() {
         <p className="text-gray-400 text-sm">Φορτωση...</p>
       ) : visible.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-48 text-gray-400 border-2 border-dashed rounded-xl">
-          <p className="text-lg font-medium">Δεν υπαρχουν κρατησεις</p>
-          <p className="text-sm mt-1">Πηγαινε στον <Link to="/" className="text-blue-500 underline">Χαρτη</Link> για να κανεις κρατηση</p>
+          <p className="text-lg font-medium">Δεν υπάρχουν κρατήσεις</p>
+          <p className="text-sm mt-1">Πήγαινε στον <Link to="/" className="text-blue-500 underline">Χάρτη</Link> για να κάνεις κράτηση</p>
         </div>
       ) : (
         <div className="space-y-3">

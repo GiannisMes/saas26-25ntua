@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS GlobalStats (
     metric_value INT NOT NULL DEFAULT 0
 );
 
--- Νέος πίνακας: event log για ΟΛΑ τα services
+-- Event log για ΟΛΑ τα services
 CREATE TABLE IF NOT EXISTS GlobalEvents (
     event_id INT AUTO_INCREMENT PRIMARY KEY,
     event_type VARCHAR(50) NOT NULL,

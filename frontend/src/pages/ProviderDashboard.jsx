@@ -102,7 +102,7 @@ export default function ProviderDashboard() {
                     </div>
                   </div>
                   <div className="flex gap-2 mt-2">
-                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">Κρατησεις</span>
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">Κρατήσεις</span>
                     <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-600">Live</span>
                   </div>
                 </div>
@@ -250,7 +250,7 @@ export default function ProviderDashboard() {
           <div className="max-w-3xl mx-auto">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Κρατησεις</h2>
+                <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Κρατήσεις</h2>
                 {(() => {
                   const myRes = reservations.filter(r => points.some(p => String(p.pointId) === String(r.pointId)))
                   const active = myRes.filter(r => r.status === 'ACTIVE' && !(new Date(r.endTime + 'Z') < new Date()))

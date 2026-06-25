@@ -1,9 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List, Optional
 import mysql.connector
-import os
-from datetime import datetime
 
 app = FastAPI(title="Invoice Service", description="Διαχείριση μηνιαίων συνδρομών")
 

@@ -1,5 +1,3 @@
-
-
 CREATE TABLE IF NOT EXISTS invoices (
     invoice_id INT AUTO_INCREMENT PRIMARY KEY,
     provider_name VARCHAR(50) NOT NULL,

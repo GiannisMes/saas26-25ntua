@@ -65,7 +65,7 @@ export default function Login() {
         <div className="mt-6 text-xs text-gray-600 space-y-1">
           <p>Admin: <span className="text-gray-400">admin / admin</span></p>
           <p>Πάροχος: <span className="text-gray-400">blue plug / blue plug</span></p>
-          <p>Χρήστης: <span className="text-gray-400">οποιοδήποτε / οποιοδήποτε</span></p>
+          <p>Χρήστης: <span className="text-gray-400">οποιοσδήποτε / οποιοσδήποτε</span></p>
         </div>
       </div>
     </div>
