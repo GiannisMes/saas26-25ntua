@@ -2,6 +2,8 @@ services:
   search_api:
     build: .
     container_name: search_api
+    environment:
+      - PROVIDER_API_KEY=${PROVIDER_API_KEY:?set it in .env}
     volumes:
       - .:/app
     networks:

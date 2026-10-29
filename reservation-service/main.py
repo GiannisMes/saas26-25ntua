@@ -2,13 +2,15 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 import mysql.connector
+import os
 import requests
 import uuid
 from datetime import datetime
 
 app = FastAPI()
 
-MY_API_KEY = "sk_saas_1bc1bc089068b423332e8c1e" 
+# Το κλειδί των παρόχων διαβάζεται από το .env
+MY_API_KEY = os.getenv("PROVIDER_API_KEY", "")
 
 class ReservationReqJSON(BaseModel):
     pointId: str
@@ -24,10 +26,10 @@ class ReservationResJSON(BaseModel):
 
 def get_db_connection():
     return mysql.connector.connect(
-        host="res_db", 
-        user="res_user",
-        password="res_password",
-        database="reservation_db"
+        host=os.getenv("DB_HOST", "res_db"),
+        user=os.getenv("DB_USER", "res_user"),
+        password=os.getenv("DB_PASSWORD", ""),
+        database=os.getenv("DB_NAME", "reservation_db")
     )
 
 def cancel_provider_reservation(provider: str, point_id: str, headers: dict):

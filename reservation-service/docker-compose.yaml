@@ -4,10 +4,10 @@ services:
     image: mysql:8.0
     container_name: res_db
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set it in .env}
       MYSQL_DATABASE: reservation_db
       MYSQL_USER: res_user
-      MYSQL_PASSWORD: res_password
+      MYSQL_PASSWORD: ${RES_DB_PASSWORD:?set it in .env}
     ports:
       - "3306:3306"  # Η προεπιλεγμένη θύρα της MySQL
     volumes:
@@ -24,9 +24,10 @@ services:
       - .:/app
     environment:
       - DB_HOST=res_db
-      - DB_USER=root
-      - DB_PASSWORD=root_password
+      - DB_USER=res_user
+      - DB_PASSWORD=${RES_DB_PASSWORD:?set it in .env}
       - DB_NAME=reservation_db
+      - PROVIDER_API_KEY=${PROVIDER_API_KEY:?set it in .env}
     depends_on:
       - res_db
     networks:

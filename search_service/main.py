@@ -1,3 +1,4 @@
+import os
 from pydantic import BaseModel
 from typing import Optional
 import requests
@@ -21,7 +22,7 @@ class PointResJSON(BaseModel):
 
 app = FastAPI()
 
-API_KEY = "sk_saas_1bc1bc089068b423332e8c1e"
+API_KEY = os.getenv("PROVIDER_API_KEY", "")
 
 PROVIDERS = {
     "redPlug": {

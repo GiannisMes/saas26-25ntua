@@ -28,7 +28,13 @@
 
 ## Εκκίνηση
 
-Κάθε service έχει το δικό του `docker-compose.yaml`. Εκκίνηση όλων:
+Τα κλειδιά και οι κωδικοί δεν υπάρχουν στο repo. Πριν την πρώτη εκκίνηση:
+
+```bash
+cp .env.example .env   # και συμπλήρωσε PROVIDER_API_KEY και τους κωδικούς MySQL
+```
+
+Κάθε service έχει το δικό του `docker-compose.yaml`. Εκκίνηση όλων (από τον root φάκελο):
 
 ```bash
 deploy.sh

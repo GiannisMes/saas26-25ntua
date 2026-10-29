@@ -3,10 +3,10 @@ services:
     image: mysql:8.0
     container_name: inv_db
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set it in .env}
       MYSQL_DATABASE: invoice_db
       MYSQL_USER: invoice_user
-      MYSQL_PASSWORD: invoice_password
+      MYSQL_PASSWORD: ${INVOICE_DB_PASSWORD:?set it in .env}
     ports:
       - "3310:3306" # Χρησιμοποιούμε άλλη πόρτα στον host για να μην "χτυπήσει" με τα άλλα DBs
     volumes:
@@ -20,8 +20,8 @@ services:
     container_name: invoice_api
     environment:
       - DB_HOST=inv_db
-      - DB_USER=root
-      - DB_PASSWORD=root_password
+      - DB_USER=invoice_user
+      - DB_PASSWORD=${INVOICE_DB_PASSWORD:?set it in .env}
       - DB_NAME=invoice_db
     volumes:
       - .:/app

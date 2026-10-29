@@ -3,10 +3,10 @@ services:
     image: mysql:8.0
     container_name: stats_db
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set it in .env}
       MYSQL_DATABASE: statistics_db
       MYSQL_USER: stats_user
-      MYSQL_PASSWORD: stats_password
+      MYSQL_PASSWORD: ${STATS_DB_PASSWORD:?set it in .env}
     ports:
       - "3307:3306" # Εξωτερική πόρτα 3307
     volumes:
@@ -22,8 +22,8 @@ services:
       - .:/app
     environment:
       - DB_HOST=stats_db
-      - DB_USER=root
-      - DB_PASSWORD=root_password
+      - DB_USER=stats_user
+      - DB_PASSWORD=${STATS_DB_PASSWORD:?set it in .env}
       - DB_NAME=statistics_db
     depends_on:
       - stats_db

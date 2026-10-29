@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import mysql.connector
+import os
 
 app = FastAPI(title="Invoice Service", description="Διαχείριση μηνιαίων συνδρομών")
 
@@ -9,10 +10,10 @@ PRICE_PER_POINT = 10.00
 
 def get_db_connection():
     return mysql.connector.connect(
-        host="inv_db", 
-        user="invoice_user",
-        password="invoice_password",
-        database="invoice_db"
+        host=os.getenv("DB_HOST", "inv_db"),
+        user=os.getenv("DB_USER", "invoice_user"),
+        password=os.getenv("DB_PASSWORD", ""),
+        database=os.getenv("DB_NAME", "invoice_db")
     )
 
 # Σταθερή χρέωση ανά σημείο φόρτισης (π.χ. 10 ευρώ)

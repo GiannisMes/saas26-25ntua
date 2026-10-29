@@ -5,6 +5,7 @@ from datetime import datetime, date
 from fastapi import Query
 import json
 import mysql.connector
+import os
 
 app = FastAPI()
 
@@ -18,10 +19,10 @@ class StatUpdate(BaseModel):
 
 def get_db_connection():
     return mysql.connector.connect(
-        host="stats_db",
-        user="stats_user",
-        password="stats_password",
-        database="statistics_db"
+        host=os.getenv("DB_HOST", "stats_db"),
+        user=os.getenv("DB_USER", "stats_user"),
+        password=os.getenv("DB_PASSWORD", ""),
+        database=os.getenv("DB_NAME", "statistics_db")
     )
 
 # --- 1. ENDPOINT ΓΙΑ ΤΟΝ ORCHESTRATOR (Ενημέρωση) ---

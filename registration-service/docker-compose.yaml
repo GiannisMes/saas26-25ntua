@@ -3,10 +3,10 @@ services:
     image: mysql:8.0
     container_name: reg_db
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set it in .env}
       MYSQL_DATABASE: registration_db
       MYSQL_USER: reg_user
-      MYSQL_PASSWORD: reg_password
+      MYSQL_PASSWORD: ${REG_DB_PASSWORD:?set it in .env}
     ports:
       - "3309:3306"
     volumes:
@@ -20,8 +20,8 @@ services:
     container_name: reg_app
     environment:
       - DB_HOST=reg_db
-      - DB_USER=root
-      - DB_PASSWORD=root_password
+      - DB_USER=reg_user
+      - DB_PASSWORD=${REG_DB_PASSWORD:?set it in .env}
       - DB_NAME=registration_db
     volumes:
       - .:/app

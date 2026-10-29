@@ -5,6 +5,11 @@ set -e
 
 echo "Starting deployment..."
 
+if [ ! -f .env ]; then
+  echo "Missing .env: run cp .env.example .env and fill in the values." >&2
+  exit 1
+fi
+
 # 1. Setup Docker Network
 echo "Checking for shared-api-network..."
 if ! docker network ls | grep -q "shared-api-network"; then
@@ -29,7 +34,7 @@ SERVICES=(
 echo "Building and starting backend microservices..."
 for SERVICE in "${SERVICES[@]}"; do
   echo "Starting $SERVICE..."
-  docker compose -f "$SERVICE/docker-compose.yaml" up -d --build
+  docker compose --env-file .env -f "$SERVICE/docker-compose.yaml" up -d --build
 done
 
 echo "All backend services are up and running in the background."

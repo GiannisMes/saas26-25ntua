@@ -14,10 +14,10 @@ DB_NAME = os.getenv("DB_NAME", "provider_statistics_db")
 
 def get_db_connection():
     return mysql.connector.connect(
-        host="prov_stats_db", 
-        user="prov_stats_user",
-        password="prov_stats_password",
-        database="provider_statistics_db"
+        host=os.getenv("DB_HOST", "prov_stats_db"),
+        user=os.getenv("DB_USER", "prov_stats_user"),
+        password=os.getenv("DB_PASSWORD", ""),
+        database=os.getenv("DB_NAME", "provider_statistics_db")
     )
 
 class EventType(str, Enum):

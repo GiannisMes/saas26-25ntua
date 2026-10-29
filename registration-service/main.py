@@ -1,16 +1,17 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import mysql.connector
+import os
 import requests
 
 app = FastAPI()
 
 def get_db_connection():
     return mysql.connector.connect(
-        host="reg_db", 
-        user="reg_user",
-        password="reg_password",
-        database="registration_db"
+        host=os.getenv("DB_HOST", "reg_db"),
+        user=os.getenv("DB_USER", "reg_user"),
+        password=os.getenv("DB_PASSWORD", ""),
+        database=os.getenv("DB_NAME", "registration_db")
     )
 
 # --- Pydantic Models (DTOs) ---
